@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>BLS Street Coffee - Kasir POS Outlet Tepi Jalan</title>
+  
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23D97706'><path d='M2 21h18v-2H2v2M20 8h-2V5h2m0-2H4v10a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4v-3h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z'/></svg>">
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Container Aplikasi Utama -->
+  <div class="pos-app">
+    
+    <!-- HEADER BAR KASIR -->
+    <header class="pos-header">
+      <div class="header-brand">
+        <div class="brand-badge">
+          <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+            <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+            <line x1="6" y1="1" x2="6" y2="4"></line>
+            <line x1="10" y1="1" x2="10" y2="4"></line>
+            <line x1="14" y1="1" x2="14" y2="4"></line>
+          </svg>
+        </div>
+        <div class="brand-info">
+          <div class="brand-title-wrap">
+            <h1 class="brand-name">BLS Street Coffee</h1>
+            <span class="brand-pill">OUTLET TEPI JALAN</span>
+          </div>
+          <p class="brand-tagline">Kasir POS Cepat • Booth Kiosk Edition</p>
+        </div>
+      </div>
+
+      <!-- Info Waktu & Kasir -->
+      <div class="header-center">
+        <div class="shift-box">
+          <div class="shift-indicator">
+            <span class="status-dot live"></span>
+            <span class="shift-name" id="currentShift">Shift 1 • Booth Aktif</span>
+          </div>
+          <div class="clock-display" id="liveClock">00:00:00</div>
+          <div class="date-display" id="liveDate">Senin, 1 Jan 2026</div>
+        </div>
+      </div>
+
+      <!-- Header Aksi & Shortcut -->
+      <div class="header-actions">
+        <button type="button" class="btn-tool" id="btnSoundToggle" title="Suara Beep Kasir">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+            <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+          </svg>
+          <span class="tool-label">Suara: ON</span>
+        </button>
+
+        <button type="button" class="btn-tool" id="btnManageMenu" title="Kelola Ketersediaan Menu">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 20h9"></path>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path>
+          </svg>
+          <span class="tool-label">Kelola Menu</span>
+        </button>
+
+        <button type="button" class="btn-tool primary" id="btnReportModal" title="Rekap & Riwayat Penjualan">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M21.21 15.89A10 10 0 1 1 8 2.83"></path>
+            <path d="M22 12A10 10 0 0 0 12 2v10z"></path>
+          </svg>
+          <span class="tool-label">Rekap Kasir</span>
+          <span class="badge-omzet" id="headerOmzetBadge">Rp 0</span>
+        </button>
+
+        <!-- Tombol Menu Admin untuk Pemilik -->
+        <button type="button" class="btn-tool admin" id="btnOpenAdmin" title="Panel Pengaturan & Kelola Toko">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          <span class="tool-label">Panel Admin</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- KONTEN UTAMA: DUA KOLOM (KATALOG MENU & ORDER TERMINAL) -->
+    <main class="pos-main">
+      
+      <!-- KOLOM KIRI: KATALOG MENU & FILTER -->
+      <section class="catalog-section">
+        
+        <!-- Bar Pencarian & Kategori -->
+        <div class="catalog-controls">
+          <div class="search-box">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+            <input type="text" id="menuSearchInput" placeholder="Cari kopi, susu, aren, cokelat, teh... (Tekan '/' untuk cari)" autocomplete="off">
+            <button type="button" class="btn-clear-search" id="btnClearSearch" title="Hapus Pencarian">&times;</button>
+          </div>
+
+          <!-- Kategori Tabs Scrollable -->
+          <div class="category-tabs" id="categoryTabsContainer">
+            <!-- Diisi secara dinamis via JavaScript -->
+          </div>
+        </div>
+
+        <!-- Grid Menu Produk -->
+        <div class="menu-grid-wrapper">
+          <div class="menu-grid" id="menuGridContainer">
+            <!-- Kartu Menu diisi via JavaScript -->
+          </div>
+          <div class="empty-menu-state" id="emptyMenuState" style="display: none;">
+            <svg class="empty-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+            <h3>Menu Tidak Ditemukan</h3>
+            <p>Coba kata kunci lain atau pilih kategori "Semua Menu".</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- KOLOM KANAN: TERMINAL KERANJANG KASIR (CHECKOUT PANEL) -->
+      <aside class="checkout-panel">
+        
+        <!-- Header Terminal Kasir -->
+        <div class="terminal-header">
+          <div class="order-id-wrap">
+            <span class="label-order">No. Pesanan:</span>
+            <span class="value-order" id="currentOrderId">#BLS-1001</span>
+          </div>
+
+          <!-- Pilihan Tipe Pesanan (Bungkus / Minum Sini) -->
+          <div class="order-type-selector">
+            <button type="button" class="type-btn active" data-type="takeaway" id="typeTakeaway">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <path d="M16 10a4 4 0 0 1-8 0"></path>
+              </svg>
+              Bungkus (Takeaway)
+            </button>
+            <button type="button" class="type-btn" data-type="dinein" id="typeDinein">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+                <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+              </svg>
+              Minum Sini
+            </button>
+          </div>
+        </div>
+
+        <!-- Daftar Item Pesanan dalam Keranjang -->
+        <div class="cart-items-wrapper" id="cartItemsContainer">
+          <!-- Item keranjang dimasukkan via JavaScript -->
+        </div>
+
+        <!-- Keadaan Kosong (Keranjang Kosong) -->
+        <div class="cart-empty-state" id="cartEmptyState">
+          <div class="empty-cart-graphic">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M17 10h4a2 2 0 0 1 2 2v7a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h4"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+          </div>
+          <h4>Keranjang Masih Kosong</h4>
+          <p>Ketuk menu kopi atau cemilan di sebelah kiri untuk mulai pesanan pelanggan.</p>
+        </div>
+
+        <!-- Footer Ringkasan Biaya & Tombol Bayar -->
+        <div class="cart-summary-footer">
+          
+          <!-- Catatan Pesanan Khusus -->
+          <div class="order-notes-wrap">
+            <input type="text" id="orderNotesInput" placeholder="Catatan pesanan (misal: kurangi es, pisah gula...)" autocomplete="off">
+          </div>
+
+          <!-- Rincian Biaya -->
+          <div class="summary-rows">
+            <div class="summary-row">
+              <span>Subtotal (<span id="cartTotalItems">0</span> item)</span>
+              <span class="value-amount" id="cartSubtotalText">Rp 0</span>
+            </div>
+
+            <div class="summary-row discount-row">
+              <div class="discount-label-wrap">
+                <span>Diskon Promo</span>
+                <div class="discount-quick-pills">
+                  <button type="button" class="disc-pill active" data-disc="0">0%</button>
+                  <button type="button" class="disc-pill" data-disc="5">5%</button>
+                  <button type="button" class="disc-pill" data-disc="10">10%</button>
+                  <button type="button" class="disc-pill" data-disc="manual">Manual</button>
+                </div>
+              </div>
+              <span class="value-discount" id="cartDiscountText">- Rp 0</span>
+            </div>
+
+            <div class="summary-row total-row">
+              <span class="total-label">TOTAL BAYAR</span>
+              <span class="value-total" id="cartGrandTotalText">Rp 0</span>
+            </div>
+          </div>
+
+          <!-- Tombol Aksi Kasir -->
+          <div class="terminal-actions">
+            <button type="button" class="btn-clear-cart" id="btnClearCart" title="Reset Keranjang">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                <polyline points="3 6 5 6 21 6"></polyline>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+              </svg>
+              <span>Reset</span>
+            </button>
+            <button type="button" class="btn-pay-now" id="btnOpenPayment" disabled>
+              <div class="pay-text-group">
+                <span class="pay-title">BAYAR SEKARANG</span>
+                <span class="pay-shortcut">F4 / Spasi</span>
+              </div>
+              <span class="pay-amount-badge" id="btnPayAmountBadge">Rp 0</span>
+            </button>
+          </div>
+        </div>
+
+      </aside>
+    </main>
+
+  </div> <!-- End pos-app -->
+
+  <!-- ======================================================== -->
+  <!-- MODAL 1: KONFIGURASI ITEM MENU (SUHU, GULA, TOPPING)     -->
+  <!-- ======================================================== -->
+  <div class="pos-modal-overlay" id="modalConfigItem" style="display: none;">
+    <div class="pos-modal-card modal-config">
+      <div class="modal-header">
+        <div class="item-preview-badge" id="configItemBadge">Menu Pilihan</div>
+        <h3 class="modal-title" id="configItemName">Kopi Susu Gula Aren</h3>
+        <p class="modal-subtitle" id="configItemDesc">Espresso robusta, susu segar, dan gula aren asli</p>
+        <button type="button" class="btn-close-modal" id="btnCloseConfigModal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Pilihan Suhu (Ice / Hot) -->
+        <div class="config-group" id="configGroupTemp">
+          <label class="group-label">Pilihan Penyajian (Suhu):</label>
+          <div class="option-grid" id="configOptionsTemp">
+            <!-- Radio Buttons dinamis -->
+          </div>
+        </div>
+
+        <!-- Pilihan Level Gula (Sugar) -->
+        <div class="config-group" id="configGroupSugar">
+          <label class="group-label">Level Gula / Kemanisan:</label>
+          <div class="option-grid" id="configOptionsSugar">
+            <!-- Radio Buttons dinamis -->
+          </div>
+        </div>
+
+        <!-- Pilihan Extra Topping -->
+        <div class="config-group" id="configGroupTopping">
+          <label class="group-label">Extra Topping / Tambahan (Opsional):</label>
+          <div class="toppings-list" id="configOptionsTopping">
+            <!-- Checkbox Extra Toppings -->
+          </div>
+        </div>
+
+        <!-- Qty Counter & Kalkulasi Subtotal Item -->
+        <div class="config-footer-calc">
+          <div class="qty-stepper">
+            <button type="button" class="step-btn" id="btnConfigQtyMinus">-</button>
+            <span class="qty-number" id="configQtyDisplay">1</span>
+            <button type="button" class="step-btn" id="btnConfigQtyPlus">+</button>
+          </div>
+          <div class="item-subtotal-box">
+            <span class="sub-label">Subtotal Item:</span>
+            <span class="sub-amount" id="configItemSubtotalDisplay">Rp 10.000</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="btnCancelConfig">Batal</button>
+        <button type="button" class="btn-primary" id="btnConfirmAddToCart">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Tambahkan ke Pesanan
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL 2: PEMBAYARAN KASIR (CASH, QRIS, TRANSFER)        -->
+  <!-- ======================================================== -->
+  <div class="pos-modal-overlay" id="modalPayment" style="display: none;">
+    <div class="pos-modal-card modal-payment">
+      <div class="modal-header">
+        <div>
+          <span class="order-tag-highlight" id="payModalOrderId">#BLS-1001</span>
+          <h3 class="modal-title">Pembayaran Kasir</h3>
+        </div>
+        <button type="button" class="btn-close-modal" id="btnClosePayModal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Tagihan Total -->
+        <div class="bill-highlight-banner">
+          <span class="bill-label">TOTAL YANG HARUS DIBAYAR</span>
+          <span class="bill-amount" id="payModalTotalAmount">Rp 0</span>
+        </div>
+
+        <!-- Pilihan Tab Metode Bayar -->
+        <div class="payment-tabs">
+          <button type="button" class="pay-tab active" data-method="cash" id="tabCash">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+              <rect x="2" y="6" width="20" height="12" rx="2"></rect>
+              <circle cx="12" cy="12" r="2"></circle>
+              <path d="M6 12h.01M18 12h.01"></path>
+            </svg>
+            Tunai (Cash)
+          </button>
+          <button type="button" class="pay-tab" data-method="qris" id="tabQris">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+              <rect x="3" y="3" width="7" height="7"></rect>
+              <rect x="14" y="3" width="7" height="7"></rect>
+              <rect x="14" y="14" width="7" height="7"></rect>
+              <rect x="3" y="14" width="7" height="7"></rect>
+            </svg>
+            QRIS Cepat
+          </button>
+          <button type="button" class="pay-tab" data-method="transfer" id="tabTransfer">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+              <rect x="1" y="4" width="22" height="16" rx="2" ry="2"></rect>
+              <line x1="1" y1="10" x2="23" y2="10"></line>
+            </svg>
+            Transfer / E-Wallet
+          </button>
+        </div>
+
+        <!-- VIEW 1: TUNAI (CASH) -->
+        <div class="payment-view active" id="viewPaymentCash">
+          <div class="cash-input-wrap">
+            <label for="cashReceivedInput" class="input-label">Nominal Uang Diterima dari Pelanggan:</label>
+            <div class="input-group-currency">
+              <span class="currency-prefix">Rp</span>
+              <input type="number" id="cashReceivedInput" placeholder="0" min="0" step="1000" autocomplete="off">
+            </div>
+          </div>
+
+          <!-- Tombol Pecahan Cepat -->
+          <div class="cash-shortcuts">
+            <button type="button" class="btn-cash-quick exact" id="btnCashExact">Uang Pas</button>
+            <button type="button" class="btn-cash-quick" data-val="10000">10.000</button>
+            <button type="button" class="btn-cash-quick" data-val="20000">20.000</button>
+            <button type="button" class="btn-cash-quick" data-val="50000">50.000</button>
+            <button type="button" class="btn-cash-quick" data-val="100000">100.000</button>
+          </div>
+
+          <!-- Banner Status Kembalian -->
+          <div class="change-calc-box" id="changeCalcBox">
+            <div class="calc-row">
+              <span class="calc-label">Kembalian:</span>
+              <span class="calc-amount" id="cashChangeAmount">Rp 0</span>
+            </div>
+            <div class="change-notice" id="changeNotice">Masukkan nominal uang diterima.</div>
+          </div>
+        </div>
+
+        <!-- VIEW 2: QRIS -->
+        <div class="payment-view" id="viewPaymentQris" style="display: none;">
+          <div class="qris-presentation">
+            <div class="qris-qr-wrapper">
+              <!-- Visual QR Code Representatif untuk BLS Street Coffee -->
+              <svg class="qris-qr-svg" viewBox="0 0 200 200">
+                <rect width="200" height="200" fill="#FFFFFF" rx="12"></rect>
+                <!-- Outer Finder Patterns -->
+                <rect x="20" y="20" width="45" height="45" fill="#1C1917" rx="6"></rect>
+                <rect x="27" y="27" width="31" height="31" fill="#FFFFFF" rx="4"></rect>
+                <rect x="34" y="34" width="17" height="17" fill="#1C1917" rx="2"></rect>
+
+                <rect x="135" y="20" width="45" height="45" fill="#1C1917" rx="6"></rect>
+                <rect x="142" y="27" width="31" height="31" fill="#FFFFFF" rx="4"></rect>
+                <rect x="149" y="34" width="17" height="17" fill="#1C1917" rx="2"></rect>
+
+                <rect x="20" y="135" width="45" height="45" fill="#1C1917" rx="6"></rect>
+                <rect x="27" y="142" width="31" height="31" fill="#FFFFFF" rx="4"></rect>
+                <rect x="34" y="149" width="17" height="17" fill="#1C1917" rx="2"></rect>
+
+                <!-- Data Matrix Dots -->
+                <rect x="75" y="25" width="12" height="12" fill="#1C1917"></rect>
+                <rect x="95" y="25" width="12" height="12" fill="#1C1917"></rect>
+                <rect x="115" y="25" width="12" height="12" fill="#1C1917"></rect>
+                <rect x="75" y="45" width="12" height="12" fill="#1C1917"></rect>
+                <rect x="105" y="45" width="12" height="12" fill="#1C1917"></rect>
+
+                <rect x="25" y="75" width="12" height="12" fill="#1C1917"></rect>
+                <rect x="45" y="85" width="12" height="12" fill="#1C1917"></rect>
+                <rect x="75" y="75" width="12" height="12" fill="#D97706"></rect>
+                <rect x="95" y="75" width="12" height="12" fill="#1C1917"></rect>
+                <rect x="115" y="75" width="12" height="12" fill="#1C1917"></rect>
+                <rect x="135" y="75" width="12" height="12" fill="#1C1917"></rect>
+                <rect x="155" y="85" width="12" height="12" fill="#1C1917"></rect>
+
+                <!-- Center Logo Coffee Cup -->
+                <circle cx="100" cy="100" r="22" fill="#D97706"></circle>
+                <path d="M93 95h14v7a4 4 0 0 1-4 4h-6a4 4 0 0 1-4-4v-7z" fill="#FFFFFF"></path>
+                <path d="M107 97h2a2 2 0 0 1 2 2v1a2 2 0 0 1-2 2h-2" stroke="#FFFFFF" stroke-width="2" fill="none"></path>
+
+                <!-- Lower Matrix -->
+                <rect x="75" y="135" width="12" height="12" fill="#1C1917"></rect>
+                <rect x="95" y="125" width="12" height="12" fill="#1C1917"></rect>
+                <rect x="115" y="135" width="12" height="12" fill="#1C1917"></rect>
+                <rect x="140" y="120" width="12" height="12" fill="#1C1917"></rect>
+                <rect x="160" y="140" width="12" height="12" fill="#1C1917"></rect>
+                <rect x="140" y="160" width="12" height="12" fill="#1C1917"></rect>
+                <rect x="160" y="160" width="12" height="12" fill="#1C1917"></rect>
+              </svg>
+            </div>
+            <div class="qris-info">
+              <h4>NMID: ID1029384756102</h4>
+              <p>Arahkan kamera pelanggan ke QRIS di atas (BCA, Mandiri, GoPay, OVO, ShopeePay, Dana, LinkAja).</p>
+              <div class="qris-nominal-box">
+                <span>Nominal Masuk Otomatis:</span>
+                <strong id="qrisDisplayAmount">Rp 0</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- VIEW 3: TRANSFER / E-WALLET -->
+        <div class="payment-view" id="viewPaymentTransfer" style="display: none;">
+          <div class="transfer-options">
+            <p class="guide-text">Pilih rekening tujuan atau dompet digital yang digunakan pelanggan:</p>
+            <div class="bank-cards">
+              <div class="bank-card selected">
+                <span class="bank-badge">BCA</span>
+                <div class="bank-details">
+                  <strong>872-049-1122</strong>
+                  <small>a.n BLS Street Coffee</small>
+                </div>
+              </div>
+              <div class="bank-card">
+                <span class="bank-badge gopay">GOPAY / DANA</span>
+                <div class="bank-details">
+                  <strong>0812-3456-7890</strong>
+                  <small>a.n Kasir Booth BLS</small>
+                </div>
+              </div>
+            </div>
+            <div class="transfer-ref-input">
+              <label for="transferRefInput">Nomor Ref / Nama Pengirim (Opsional):</label>
+              <input type="text" id="transferRefInput" placeholder="Contoh: Budi - BCA Mobile">
+            </div>
+          </div>
+        </div>
+
+      </div> <!-- End modal-body -->
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="btnCancelPay">Kembali ke Order</button>
+        <button type="button" class="btn-success" id="btnCompletePayment">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          Selesaikan Transaksi & Cetak Struk
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL 3: PREVIEW STRUK THERMAL & CETAK (RECEIPT)        -->
+  <!-- ======================================================== -->
+  <div class="pos-modal-overlay" id="modalReceipt" style="display: none;">
+    <div class="pos-modal-card modal-receipt">
+      <div class="modal-header">
+        <div>
+          <span class="success-pill">TRANSAKSI BERHASIL</span>
+          <h3 class="modal-title">Struk Pembayaran</h3>
+        </div>
+        <button type="button" class="btn-close-modal" id="btnCloseReceiptModal">&times;</button>
+      </div>
+
+      <!-- KERTAS STRUK THERMAL 58mm -->
+      <div class="modal-body receipt-scrollable">
+        <div class="receipt-paper" id="thermalReceiptPaper">
+          <div class="receipt-brand">
+            <h2 class="receipt-title">BLS STREET COFFEE</h2>
+            <p class="receipt-sub">Outlet Kopi Tepi Jalan</p>
+            <p class="receipt-address">Jln. Raya Utama No. 88 (Depan Halte)</p>
+            <p class="receipt-contact">WA: 0812-3456-7890 • IG: @bls.streetcoffee</p>
+          </div>
+
+          <div class="receipt-dashed"></div>
+
+          <div class="receipt-meta">
+            <div class="meta-line"><span>No. Nota:</span> <strong id="recOrderId">#BLS-1001</strong></div>
+            <div class="meta-line"><span>Waktu:</span> <span id="recTimestamp">12/11/2026, 10:45</span></div>
+            <div class="meta-line"><span>Kasir:</span> <span id="recCashier">Kasir Booth 01</span></div>
+            <div class="meta-line"><span>Tipe:</span> <span id="recOrderType">Bungkus (Takeaway)</span></div>
+            <div class="meta-line" id="recNotesWrap" style="display: none;"><span>Catatan:</span> <span id="recNotes">-</span></div>
+          </div>
+
+          <div class="receipt-dashed"></div>
+
+          <!-- Tabel Item Struk -->
+          <div class="receipt-items-table" id="recItemsTable">
+            <!-- Diisi via JavaScript -->
+          </div>
+
+          <div class="receipt-dashed"></div>
+
+          <!-- Total Struk -->
+          <div class="receipt-totals">
+            <div class="tot-line"><span>Subtotal:</span> <span id="recSubtotal">Rp 0</span></div>
+            <div class="tot-line" id="recDiscountLine" style="display: none;"><span>Diskon:</span> <span id="recDiscount">- Rp 0</span></div>
+            <div class="tot-line grand"><span>TOTAL:</span> <strong id="recGrandTotal">Rp 0</strong></div>
+            <div class="tot-line"><span>Metode:</span> <span id="recMethod">Tunai (Cash)</span></div>
+            <div class="tot-line" id="recPayCashLine"><span>Uang Diterima:</span> <span id="recCashGiven">Rp 0</span></div>
+            <div class="tot-line" id="recChangeLine"><span>Kembalian:</span> <span id="recCashChange">Rp 0</span></div>
+          </div>
+
+          <div class="receipt-dashed"></div>
+
+          <div class="receipt-footer">
+            <p class="footer-msg">Terima Kasih Sudah Ngopi di BLS!</p>
+            <p class="footer-sub">Semoga Hari Anda Menyenangkan & Semangat Terus.</p>
+            <p class="footer-star">*** NIKMATI KOPI JALANAN RASA BINTANG LIMA ***</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Aksi Cetak & Lanjut -->
+      <div class="modal-actions">
+        <button type="button" class="btn-tool" id="btnShareWa" title="Kirim teks struk ke WhatsApp">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path>
+          </svg>
+          Kirim ke WhatsApp
+        </button>
+        <button type="button" class="btn-secondary" id="btnPrintReceipt">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+            <rect x="6" y="14" width="12" height="8"></rect>
+          </svg>
+          Cetak Struk (Print)
+        </button>
+        <button type="button" class="btn-primary" id="btnNewTransaction">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Pesanan Baru (Selesai)
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL 4: REKAP PENJUALAN SHIFT & RIWAYAT TRANSAKSI       -->
+  <!-- ======================================================== -->
+  <div class="pos-modal-overlay" id="modalReport" style="display: none;">
+    <div class="pos-modal-card modal-report">
+      <div class="modal-header">
+        <div>
+          <span class="report-badge">RINGKASAN OPERASIONAL</span>
+          <h3 class="modal-title">Laporan Penjualan Kasir Hari Ini</h3>
+        </div>
+        <button type="button" class="btn-close-modal" id="btnCloseReportModal">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Metrik Ringkasan (Cards) -->
+        <div class="metrics-grid">
+          <div class="metric-card highlight">
+            <span class="met-label">Total Omzet Hari Ini</span>
+            <strong class="met-value" id="reportOmzetTotal">Rp 0</strong>
+            <span class="met-sub" id="reportTransactionCount">0 Transaksi Sukses</span>
+          </div>
+          <div class="metric-card">
+            <span class="met-label">Total Cup Terjual</span>
+            <strong class="met-value" id="reportCupsSold">0 Cup</strong>
+            <span class="met-sub">Kopi & Minuman Segar</span>
+          </div>
+          <div class="metric-card">
+            <span class="met-label">Tunai (Cash di Laci)</span>
+            <strong class="met-value text-amber" id="reportCashTotal">Rp 0</strong>
+            <span class="met-sub">Uang Fisik Kasir</span>
+          </div>
+          <div class="metric-card">
+            <span class="met-label">QRIS & Transfer Masuk</span>
+            <strong class="met-value text-emerald" id="reportNonCashTotal">Rp 0</strong>
+            <span class="met-sub">Bank & E-Wallet</span>
+          </div>
+        </div>
+
+        <!-- Tabel Riwayat Transaksi -->
+        <div class="report-table-wrapper">
+          <div class="table-header-bar">
+            <h4>Riwayat Transaksi Shift Ini</h4>
+            <div class="table-tools">
+              <button type="button" class="btn-subtool" id="btnExportCsv">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Export Excel / CSV
+              </button>
+              <button type="button" class="btn-subtool danger" id="btnResetShift">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                  <polyline points="1 4 1 10 7 10"></polyline>
+                  <polyline points="23 20 23 14 17 14"></polyline>
+                  <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"></path>
+                </svg>
+                Reset Shift Baru
+              </button>
+            </div>
+          </div>
+
+          <div class="table-scroll">
+            <table class="report-table">
+              <thead>
+                <tr>
+                  <th>No. Nota</th>
+                  <th>Waktu</th>
+                  <th>Tipe</th>
+                  <th>Rincian Item</th>
+                  <th>Metode</th>
+                  <th>Total</th>
+                  <th>Aksi</th>
+                </tr>
+              </thead>
+              <tbody id="reportTableBody">
+                <!-- Diisi via JavaScript -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-primary" id="btnCloseReport">Tutup Laporan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL 5: KELOLA KETERSEDIAAN MENU & STOK                 -->
+  <!-- ======================================================== -->
+  <div class="pos-modal-overlay" id="modalMenuManage" style="display: none;">
+    <div class="pos-modal-card modal-manage">
+      <div class="modal-header">
+        <div>
+          <span class="manage-badge">KONTROL OUTLET</span>
+          <h3 class="modal-title">Kelola Ketersediaan Menu</h3>
+          <p class="modal-subtitle">Nonaktifkan menu jika stok bahan baku di booth habis (Sold Out)</p>
+        </div>
+        <button type="button" class="btn-close-modal" id="btnCloseManageModal">&times;</button>
+      </div>
+
+      <div class="modal-body manage-scroll">
+        <div class="manage-list" id="manageMenuListContainer">
+          <!-- Diisi via JavaScript -->
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="btnResetMenuDefault">Kembalikan Default</button>
+        <button type="button" class="btn-primary" id="btnSaveMenuManage">Simpan Perubahan</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUDIO BEEP KASIR (Web Audio API Synthesizer) -->
+
+  <!-- ======================================================== -->
+  <!-- MODAL 6: VERIFIKASI PIN ADMIN                           -->
+  <!-- ======================================================== -->
+  <div class="pos-modal-overlay" id="modalAdminPin" style="display: none;">
+    <div class="pos-modal-card modal-pin">
+      <div class="modal-header">
+        <div>
+          <span class="manage-badge">KEAMANAN OUTLET</span>
+          <h3 class="modal-title">Masukkan PIN Admin</h3>
+        </div>
+        <button type="button" class="btn-close-modal" id="btnClosePinModal">&times;</button>
+      </div>
+      <div class="modal-body pin-body">
+        <p class="pin-hint">Halaman ini khusus pemilik untuk mengelola menu, harga, dan pengaturan.</p>
+        <div class="pin-display-wrap">
+          <input type="password" id="adminPinInput" maxlength="6" readonly placeholder="••••" class="pin-display">
+        </div>
+        <div class="pin-keypad">
+          <button type="button" class="key-btn" data-key="1">1</button>
+          <button type="button" class="key-btn" data-key="2">2</button>
+          <button type="button" class="key-btn" data-key="3">3</button>
+          <button type="button" class="key-btn" data-key="4">4</button>
+          <button type="button" class="key-btn" data-key="5">5</button>
+          <button type="button" class="key-btn" data-key="6">6</button>
+          <button type="button" class="key-btn" data-key="7">7</button>
+          <button type="button" class="key-btn" data-key="8">8</button>
+          <button type="button" class="key-btn" data-key="9">9</button>
+          <button type="button" class="key-btn key-action" id="btnPinClear">C</button>
+          <button type="button" class="key-btn" data-key="0">0</button>
+          <button type="button" class="key-btn key-action primary" id="btnPinSubmit">OK</button>
+        </div>
+        <div class="pin-info-note">
+          <small>💡 PIN Bawaan Baru: <strong>1234</strong> (Dapat diubah di dalam Panel Admin)</small>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL 7: PANEL ADMIN LENGKAP (NO-CODE MANAGEMENT)       -->
+  <!-- ======================================================== -->
+  <div class="pos-modal-overlay" id="modalAdmin" style="display: none;">
+    <div class="pos-modal-card modal-admin-fullscreen">
+      <div class="modal-header admin-header">
+        <div class="admin-brand-wrap">
+          <div class="admin-badge-icon">⚙️</div>
+          <div>
+            <span class="manage-badge">PANEL PEMILIK & PENGATURAN</span>
+            <h3 class="modal-title">Manajemen BLS Street Coffee</h3>
+          </div>
+        </div>
+        <button type="button" class="btn-close-modal" id="btnCloseAdminModal">&times;</button>
+      </div>
+
+      <div class="admin-layout">
+        <!-- Sidebar Menu Admin Tabs -->
+        <nav class="admin-sidebar">
+          <button type="button" class="admin-nav-item active" data-tab="menu">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+              <path d="M18 8h1a4 4 0 0 1 0 8h-1"></path>
+              <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"></path>
+            </svg>
+            <span>Daftar Menu & Harga</span>
+          </button>
+          <button type="button" class="admin-nav-item" data-tab="toppings">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="16"></line>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+            <span>Extra Topping</span>
+          </button>
+          <button type="button" class="admin-nav-item" data-tab="profile">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+            <span>Profil Toko & Struk</span>
+          </button>
+          <button type="button" class="admin-nav-item" data-tab="payments">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+              <rect x="2" y="5" width="20" height="14" rx="2"></rect>
+              <line x1="2" y1="10" x2="22" y2="10"></line>
+            </svg>
+            <span>Metode Bayar & QRIS</span>
+          </button>
+          <button type="button" class="admin-nav-item" data-tab="analytics">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+              <line x1="18" y1="20" x2="18" y2="10"></line>
+              <line x1="12" y1="20" x2="12" y2="4"></line>
+              <line x1="6" y1="20" x2="6" y2="14"></line>
+            </svg>
+            <span>Analisis & Penjualan</span>
+          </button>
+          <button type="button" class="admin-nav-item" data-tab="security">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <span>PIN & Cadangan Data</span>
+          </button>
+        </nav>
+
+        <!-- Area Konten Tab Admin -->
+        <div class="admin-content-area">
+
+          <!-- ================= TAB 1: KELOLA MENU ================= -->
+          <div class="admin-tab-pane active" id="tabPaneMenu">
+            <div class="tab-pane-header">
+              <div>
+                <h4>Katalog Produk & Harga Jual</h4>
+                <p>Tambah menu baru, ubah harga, atau atur status stok tanpa perlu koding.</p>
+              </div>
+              <button type="button" class="btn-primary" id="btnAdminAddMenu">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                  <line x1="12" y1="5" x2="12" y2="19"></line>
+                  <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                + Tambah Menu Baru
+              </button>
+            </div>
+
+            <!-- Tabel Daftar Menu Admin -->
+            <div class="admin-table-container">
+              <table class="admin-data-table">
+                <thead>
+                  <tr>
+                    <th>Foto</th>
+                    <th>Nama Menu</th>
+                    <th>Kategori</th>
+                    <th>Harga Jual</th>
+                    <th>Badge Promo</th>
+                    <th>Status Stok</th>
+                    <th>Tindakan</th>
+                  </tr>
+                </thead>
+                <tbody id="adminMenuTableBody">
+                  <!-- Diisi via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ================= TAB 2: EXTRA TOPPING ================= -->
+          <div class="admin-tab-pane" id="tabPaneToppings" style="display: none;">
+            <div class="tab-pane-header">
+              <div>
+                <h4>Kelola Extra Topping / Tambahan</h4>
+                <p>Atur varian tambahan seperti extra shot espresso, boba, cincau, dan harganya.</p>
+              </div>
+              <button type="button" class="btn-primary" id="btnAdminAddTopping">
+                + Tambah Topping Baru
+              </button>
+            </div>
+
+            <div class="admin-table-container">
+              <table class="admin-data-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Nama Topping</th>
+                    <th>Harga Tambahan</th>
+                    <th>Tindakan</th>
+                  </tr>
+                </thead>
+                <tbody id="adminToppingsTableBody">
+                  <!-- Diisi via JavaScript -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- ================= TAB 3: PROFIL TOKO & STRUK ================= -->
+          <div class="admin-tab-pane" id="tabPaneProfile" style="display: none;">
+            <div class="tab-pane-header">
+              <div>
+                <h4>Informasi Toko & Tampilan Struk</h4>
+                <p>Data ini otomatis tercetak di kertas struk dan pesan WhatsApp kasir.</p>
+              </div>
+            </div>
+
+            <form id="formStoreProfile" class="admin-form-grid">
+              <div class="form-group">
+                <label>Nama Usaha / Outlet:</label>
+                <input type="text" id="profStoreName" value="BLS STREET COFFEE" required>
+                <small>Muncul di bagian paling atas struk belanja.</small>
+              </div>
+
+              <div class="form-group">
+                <label>Sub-judul / Tagline:</label>
+                <input type="text" id="profStoreSub" value="Outlet Kopi Tepi Jalan">
+              </div>
+
+              <div class="form-group full-width">
+                <label>Alamat Lengkap Booth / Lokasi:</label>
+                <input type="text" id="profStoreAddress" value="Jln. Raya Utama No. 88 (Depan Halte)" required>
+              </div>
+
+              <div class="form-group">
+                <label>Nomor WhatsApp Kasir:</label>
+                <input type="text" id="profStoreWa" value="081234567890">
+                <small>Digunakan untuk pengiriman nota digital ke pembeli.</small>
+              </div>
+
+              <div class="form-group">
+                <label>Akun Instagram / Medsos:</label>
+                <input type="text" id="profStoreIg" value="@bls.streetcoffee">
+              </div>
+
+              <div class="form-group full-width">
+                <label>Pesan Penutup Struk (Footer):</label>
+                <textarea id="profStoreFooterMsg" rows="2">Terima Kasih Sudah Ngopi di BLS!
+Nikmati Kopi Jalanan Rasa Bintang Lima.</textarea>
+              </div>
+
+              <div class="form-actions-bar full-width">
+                <button type="button" class="btn-primary" id="btnSaveStoreProfile">
+                  💾 Simpan Informasi Toko
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- ================= TAB 4: METODE BAYAR ================= -->
+          <div class="admin-tab-pane" id="tabPanePayments" style="display: none;">
+            <div class="tab-pane-header">
+              <div>
+                <h4>Pengaturan Rekening Bank & QRIS</h4>
+                <p>Atur nomor rekening transfer dan identitas QRIS untuk kasir.</p>
+              </div>
+            </div>
+
+            <form id="formPaymentSettings" class="admin-form-grid">
+              <div class="form-group">
+                <label>Nama Bank Utama:</label>
+                <input type="text" id="payBankName" value="BCA">
+              </div>
+
+              <div class="form-group">
+                <label>Nomor Rekening Bank:</label>
+                <input type="text" id="payBankNumber" value="872-049-1122">
+              </div>
+
+              <div class="form-group">
+                <label>Atas Nama (Pemilik Rekening):</label>
+                <input type="text" id="payBankOwner" value="BLS Street Coffee">
+              </div>
+
+              <div class="form-group">
+                <label>Nomor E-Wallet (GoPay / DANA / OVO):</label>
+                <input type="text" id="payWalletNumber" value="0812-3456-7890">
+              </div>
+
+              <div class="form-group full-width">
+                <label>NMID / Nama Merchant QRIS:</label>
+                <input type="text" id="payQrisNmid" value="ID1029384756102 - BLS STREET COFFEE">
+              </div>
+
+              <div class="form-actions-bar full-width">
+                <button type="button" class="btn-primary" id="btnSavePaymentSettings">
+                  💾 Simpan Rekening & QRIS
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- ================= TAB 5: ANALISIS & STATISTIK ================= -->
+          <div class="admin-tab-pane" id="tabPaneAnalytics" style="display: none;">
+            <div class="tab-pane-header">
+              <div>
+                <h4>Laporan & Analisis Penjualan</h4>
+                <p>Pantau menu terlaris dan performa penjualan outlet tepi jalan Anda.</p>
+              </div>
+              <button type="button" class="btn-secondary" id="btnAdminExportCsv">
+                📥 Unduh Laporan Excel (CSV)
+              </button>
+            </div>
+
+            <div class="analytics-summary-cards">
+              <div class="ana-card">
+                <span>Total Omzet Keseluruhan</span>
+                <strong id="anaTotalOmzet">Rp 0</strong>
+              </div>
+              <div class="ana-card">
+                <span>Total Cup Terjual</span>
+                <strong id="anaTotalCups">0 Cup</strong>
+              </div>
+              <div class="ana-card">
+                <span>Total Transaksi Selesai</span>
+                <strong id="anaTotalTx">0 Nota</strong>
+              </div>
+            </div>
+
+            <div class="best-sellers-section">
+              <h5>🏆 5 Menu Paling Laris (Top Sellers):</h5>
+              <div class="best-sellers-list" id="anaBestSellersList">
+                <!-- Diisi via JavaScript -->
+              </div>
+            </div>
+          </div>
+
+          <!-- ================= TAB 6: KEAMANAN & BACKUP ================= -->
+          <div class="admin-tab-pane" id="tabPaneSecurity" style="display: none;">
+            <div class="tab-pane-header">
+              <div>
+                <h4>Keamanan PIN & Cadangan Data</h4>
+                <p>Amankan panel admin dengan PIN rahasia dan cadangkan data penjualan/menu.</p>
+              </div>
+            </div>
+
+            <div class="security-grid">
+              <!-- Ganti PIN -->
+              <div class="admin-card-box">
+                <h5>🔐 Ganti PIN Admin</h5>
+                <p class="card-desc-text">PIN digunakan untuk mengunci akses ke Panel Admin ini.</p>
+                <div class="form-group">
+                  <label>PIN Baru (4 - 6 Angka):</label>
+                  <input type="password" id="inputNewPin" placeholder="Contoh: 5678" maxlength="6">
+                </div>
+                <div class="form-group">
+                  <label>Ulangi PIN Baru:</label>
+                  <input type="password" id="inputConfirmPin" placeholder="Ulangi PIN" maxlength="6">
+                </div>
+                <button type="button" class="btn-primary" id="btnSaveNewPin">Perbarui PIN</button>
+              </div>
+
+              <!-- Backup & Restore -->
+              <div class="admin-card-box">
+                <h5>💾 Cadangkan & Pulihkan Data (Backup)</h5>
+                <p class="card-desc-text">Simpan semua menu, harga, dan riwayat transaksi ke berkas cadangan agar aman jika berganti perangkat/tablet.</p>
+                <div class="backup-actions">
+                  <button type="button" class="btn-tool primary" id="btnDownloadBackup">
+                    📥 Download File Cadangan (Backup JSON)
+                  </button>
+                  <div class="restore-wrap">
+                    <label class="btn-tool" for="fileRestoreInput">
+                      📤 Pulihkan Data (Restore dari File)
+                    </label>
+                    <input type="file" id="fileRestoreInput" accept=".json" style="display: none;">
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div> <!-- End admin-content-area -->
+      </div> <!-- End admin-layout -->
+    </div>
+  </div>
+
+  <!-- ======================================================== -->
+  <!-- MODAL 8: FORM TAMBAH / EDIT MENU PRODUK                  -->
+  <!-- ======================================================== -->
+  <div class="pos-modal-overlay" id="modalFormMenu" style="display: none; z-index: 120;">
+    <div class="pos-modal-card modal-form-menu">
+      <div class="modal-header">
+        <h3 class="modal-title" id="formMenuModalTitle">Tambah Menu Baru</h3>
+        <button type="button" class="btn-close-modal" id="btnCloseMenuForm">&times;</button>
+      </div>
+
+      <div class="modal-body form-menu-body">
+        <form id="menuProductForm" class="product-form-grid">
+          <input type="hidden" id="menuFormId">
+
+          <div class="form-group full-width">
+            <label>Nama Minuman / Makanan:</label>
+            <input type="text" id="menuFormName" placeholder="Contoh: Kopi Susu Pandan Wangi" required>
+          </div>
+
+          <div class="form-group">
+            <label>Kategori Menu:</label>
+            <select id="menuFormCategory" required>
+              <option value="kopi-susu">Kopi Susu</option>
+              <option value="kopi-hitam">Kopi Hitam</option>
+              <option value="non-coffee">Non-Coffee</option>
+              <option value="tea-refreshment">Tea & Segar</option>
+              <option value="cemilan">Cemilan & Roti</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Harga Jual (Rp):</label>
+            <input type="number" id="menuFormPrice" placeholder="10000" min="1000" step="500" required>
+          </div>
+
+          <div class="form-group">
+            <label>Label Promo / Badge (Opsional):</label>
+            <input type="text" id="menuFormBadge" placeholder="Misal: Best Seller / Promo / Baru">
+          </div>
+
+          <div class="form-group">
+            <label>Status Ketersediaan:</label>
+            <select id="menuFormAvailable">
+              <option value="true">Tersedia (Ready)</option>
+              <option value="false">Habis (Sold Out)</option>
+            </select>
+          </div>
+
+          <div class="form-group full-width">
+            <label>Deskripsi Singkat:</label>
+            <input type="text" id="menuFormDesc" placeholder="Penjelasan singkat rasa / racikan minuman">
+          </div>
+
+          <!-- Pilihan Foto Preset yang Mudah (No Coding!) -->
+          <div class="form-group full-width">
+            <label>Pilih Gambar Menu (Klik salah satu foto yang cocok):</label>
+            <div class="preset-images-grid" id="presetImagesContainer">
+              <!-- Preset foto kopi diisi via JS -->
+            </div>
+            <div class="custom-url-wrap">
+              <small>Atau masukkan URL gambar kustom sendiri:</small>
+              <input type="url" id="menuFormImage" placeholder="https://images.unsplash.com/...">
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="btnCancelMenuForm">Batal</button>
+        <button type="button" class="btn-primary" id="btnSaveMenuForm">Simpan Menu</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFIKASI SUKSES -->
+  <div class="pos-toast" id="posToast" style="display: none;">
+    <span class="toast-icon">✓</span>
+    <span class="toast-message" id="toastMessage">Perubahan berhasil disimpan!</span>
+  </div>
+
+  <!-- Scripts -->
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

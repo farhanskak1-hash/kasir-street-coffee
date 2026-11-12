@@ -1,0 +1,16 @@
+{
+  "name": "BLS Street Coffee - Kasir POS",
+  "short_name": "BLS POS",
+  "description": "Sistem Kasir Cepat Outlet Kopi Tepi Jalan BLS Street Coffee",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#12100E",
+  "theme_color": "#D97706",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23D97706'><path d='M2 21h18v-2H2v2M20 8h-2V5h2m0-2H4v10a4 4 0 0 0 4 4h6a4 4 0 0 0 4-4v-3h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2Z'/></svg>",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    }
+  ]
+}
